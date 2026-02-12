@@ -1,0 +1,34 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">레몬뷰</string>
+
+    <!-- Titles -->
+    <string name="title_skin_analysis">피부 분석</string>
+    <string name="title_skin_result">피부 분석 결과</string>
+
+    <!-- Buttons -->
+    <string name="btn_analyze">피부 분석 시작</string>
+    <string name="btn_back">뒤로가기</string>
+    <string name="btn_home">홈으로</string>
+
+    <!-- Result labels -->
+    <string name="skin_health">피부 건강도</string>
+    <string name="detected_issues">감지된 피부 문제</string>
+    <string name="issue_acne">여드름</string>
+    <string name="issue_pimples">뾰루지</string>
+    <string name="issue_dark_spots">잡티</string>
+    <string name="issue_oiliness">피지 과다</string>
+    <string name="issue_pigmentation">색소 침착</string>
+    <!-- Routine -->
+    <string name="routine_title">14일 피부 관리 루틴</string>
+    <string name="routine_morning">아침 관리</string>
+    <string name="routine_night">저녁 관리</string>
+    <!-- Recommendations -->
+    <string name="recommendation_title">피부 관리 권장 사항</string>
+    <string name="rec_1">하루 2회 부드러운 세안</string>
+    <string name="rec_2">충분한 수분 섭취</string>
+    <string name="rec_3">자외선 차단제 사용</string>
+    <string name="rec_4">손으로 얼굴 만지지 않기</string>
+
+</resources>

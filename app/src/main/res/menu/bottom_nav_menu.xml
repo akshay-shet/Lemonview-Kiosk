@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/tit_le"/>
+
+    <item
+        android:id="@+id/nav_makeup"
+        android:icon="@drawable/ic_makeup"
+        android:title="@string/makeup"/>
+
+    <item
+        android:id="@+id/nav_skin"
+        android:icon="@drawable/ic_skin"
+        android:title="@string/skin"/>
+
+    <item
+        android:id="@+id/nav_shop"
+        android:icon="@drawable/ic_shop"
+        android:title="@string/shop"/>
+
+</menu>

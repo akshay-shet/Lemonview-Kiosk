@@ -1,0 +1,9 @@
+{
+  "0": { "name": "Porcelain", "hex": "#F5E9DF" },
+  "1": { "name": "Ivory", "hex": "#F1E0D0" },
+  "2": { "name": "Light Beige", "hex": "#E6CBB3" },
+  "3": { "name": "Beige", "hex": "#D1AA87" },
+  "4": { "name": "Tan", "hex": "#B88C67" },
+  "5": { "name": "Caramel", "hex": "#A36A4A" },
+  "6": { "name": "Deep Cocoa", "hex": "#6A3D2B" }
+}

@@ -1,0 +1,110 @@
+<resources>
+
+    <string name="app_name">LemonView</string>
+
+    <string name="step_1">Step 1</string>
+
+    <string name="register_title">안녕하세요!\n기본 정보를 입력해주세요.</string>
+
+    <string name="name_hint">이름</string>
+    <string name="email_hint">이메일</string>
+    <string name="dob_hint">생년월일</string>
+
+    <string name="personal_agreement">개인정보 동의</string>
+
+    <string name="next">다음 →</string>
+    <string name="intro">Intro</string>
+
+    <string name="intro_next">다음 단계로 →</string>
+    <string name="intro_login">이미 계정이 있으신가요? 로그인</string>
+    <string name="intro_image_desc">Intro design image</string>
+    <string name="lemonview_ai">LemonView AI</string>
+    <string name="main_title">안녕하세요!\n오늘의 뷰티 리포트를 확인해보세요.</string>
+
+    <string name="ai_skin_title">AI 피부 분석</string>
+    <string name="ai_skin_desc">전문적인 피부 상태 진단</string>
+
+    <string name="makeup_title">메이크업 어드바이저</string>
+    <string name="makeup_desc">피부톤·얼굴형 기반 메이크업 추천</string>
+
+    <string name="shop_title">쇼핑링크</string>
+    <string name="shop_desc">추천 제품 바로 구매하기</string>
+
+    <string name="routine_title">루틴 플래너</string>
+    <string name="routine_desc">피부 분석 기반 2주 스킨케어 루틴</string>
+
+    <string name="start_arrow">시작하기 →</string>
+    <string name="enter_arrow">입장하기 →</string>
+    <string name="view_arrow">확인하기 →</string>
+    <string name="textview">TextView</string>
+    <string name="ai">LemonView AI</string>
+    <string name="todo">TODO</string>
+    <string name="shop">쇼핑몰</string>
+    <string name="skin">피부 분석</string>
+    <string name="makeup">메이크업</string>
+    <string name="tit_le">홈</string>
+    <string name="lemonview">Lemonview</string>
+    <string name="lemon">Lemonview</string>
+    <string name="makeup_advisor1">Makeup Advisor</string>
+    <!-- Titles (English → Korean title format) -->
+    <string name="title_skin_analysis">Skin Analysis · 피부 분석</string>
+
+    <!-- Login Page -->
+    <string name="login_title">로그인</string>
+    <string name="login_subtitle">AI 피부 분석 시스템</string>
+    <string name="login_name_hint">이름 입력</string>
+    <string name="login_dob_label">생년월일</string>
+    <string name="login_terms">개인정보 수집 및 이용에 동의합니다</string>
+    <string name="login_button">로그인</string>
+    <string name="login_register_new">새로운 계정 만들기</string>
+
+    <!-- Register Page -->
+    <string name="register_name_label">이름</string>
+    <string name="register_email_label">이메일</string>
+    <string name="register_dob_label">생년월일</string>
+    <string name="register_gender_label">성별</string>
+    <string name="register_gender_male">남성</string>
+    <string name="register_gender_female">여성</string>
+    <string name="register_gender_other">기타</string>
+    <string name="register_consent">개인정보 이용에 동의합니다</string>
+    <string name="register_button">다음</string>
+
+    <!-- User Details Page -->
+    <string name="user_profile_title">마이페이지</string>
+    <string name="user_user_label">사용자</string>
+    <string name="user_email_label">이메일</string>
+    <string name="user_dob_label">생년월일</string>
+    <string name="user_gender_label">성별</string>
+    <string name="user_account_info">계정 정보</string>
+    <string name="user_personal_info">개인 정보</string>
+    <string name="user_account_history">가입 정보</string>
+    <string name="user_reg_date_label">가입일</string>
+    <string name="user_logout_button">로그아웃</string>
+
+    <!-- Error Messages -->
+    <string name="error_name_empty">이름을 입력해주세요</string>
+    <string name="error_email_empty">이메일을 입력해주세요</string>
+    <string name="error_gender_empty">성별을 선택해주세요</string>
+    <string name="error_consent_empty">개인정보 이용에 동의해주세요</string>
+    <string name="error_dob_empty">생년월일을 입력해주세요</string>
+    <string name="error_age_invalid">16세 이상만 가입할 수 있습니다</string>
+    <string name="error_login_mismatch">이름 또는 생년월일이 일치하지 않습니다</string>
+    <string name="error_terms_not_accepted">약관에 동의해주세요</string>
+
+    <!-- Success Messages -->
+    <string name="success_registration">등록이 완료되었습니다!</string>
+    <string name="success_login">로그인되었습니다!</string>
+    <string name="success_logout">로그아웃되었습니다</string>
+    <string name="title_skin_result">Skin Result · 피부 결과</string>
+    <string name="skin_health">Skin Health</string>
+
+    <!-- Buttons -->
+    <string name="btn_analyze">Analyze</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_home">Home</string>
+
+    <!-- Routine Planner -->
+    <string name="routine_planner_title">루틴 플래너</string>
+    <string name="routine_save_pdf">PDF 저장</string>
+
+</resources>

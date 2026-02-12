@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "111293589553",
+    "project_id": "lemonview-4cbef",
+    "storage_bucket": "lemonview-4cbef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111293589553:android:e747a762e0309cde514d10",
+        "android_client_info": {
+          "package_name": "com.lemonview.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmBNttCtB5IK0F1XM5Q7nM_TafgvkT4kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
