@@ -2,6 +2,12 @@ package com.lemonview.ai
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Environment
+import java.io.File
+import java.io.FileOutputStream
+import java.io.BufferedReader
+import java.io.FileReader
+import java.io.FileWriter
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
@@ -95,6 +101,9 @@ class RegisterActivity : AppCompatActivity() {
                     editor.putLong("registration_time", System.currentTimeMillis())
                     editor.apply()
 
+                    // Save user details to users.csv (Excel-readable) without altering other app behavior
+                    saveUserToCsv(name, email, dob, gender)
+
                     showToast(getString(R.string.success_registration))
 
                     // ✅ AUTO-LOGIN - MOVE DIRECTLY TO MAIN MENU
@@ -135,5 +144,83 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Save or update user entry in users.csv inside app documents.
+     * CSV columns: name,email,dob,gender,registration_time,last_login
+     */
+    private fun saveUserToCsv(name: String, email: String, dob: String, gender: String) {
+        try {
+            val docs = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            if (docs == null) return
+            val csvFile = File(docs, "users.csv")
+            val now = System.currentTimeMillis()
+
+            // Prepare CSV row with quoted fields
+            val row = StringBuilder()
+            row.append('"').append(name.replace('"', '\"')).append('"').append(',')
+            row.append('"').append(email.replace('"', '\"')).append('"').append(',')
+            row.append('"').append(dob.replace('"', '\"')).append('"').append(',')
+            row.append('"').append(gender.replace('"', '\"')).append('"').append(',')
+            row.append(now).append(',').append(now).append('\n')
+
+            if (!csvFile.exists()) {
+                // Write header + row
+                FileWriter(csvFile).use { fw ->
+                    fw.append("name,email,dob,gender,registration_time,last_login\n")
+                    fw.append(row.toString())
+                    fw.flush()
+                }
+            } else {
+                // If user with same email exists, update line; else append
+                val lines = mutableListOf<String>()
+                BufferedReader(FileReader(csvFile)).use { br ->
+                    var line: String? = br.readLine()
+                    while (line != null) {
+                        lines.add(line)
+                        line = br.readLine()
+                    }
+                }
+
+                var updated = false
+                for (i in 1 until lines.size) { // skip header
+                    val l = lines[i]
+                    if (l.contains('"' + email + '"') || l.contains("," + email + ",") || l.contains(email)) {
+                        // Replace with new row (keep registration_time if present)
+                        // Try to preserve original registration_time if possible
+                        val parts = l.split(',')
+                        val regTime = if (parts.size >= 5) parts[4] else now.toString()
+                        val newRow = StringBuilder()
+                        newRow.append('"').append(name.replace('"', '\"')).append('"').append(',')
+                        newRow.append('"').append(email.replace('"', '\"')).append('"').append(',')
+                        newRow.append('"').append(dob.replace('"', '\"')).append('"').append(',')
+                        newRow.append('"').append(gender.replace('"', '\"')).append('"').append(',')
+                        newRow.append(regTime).append(',').append(now).append('\n')
+                        lines[i] = newRow.toString().trimEnd()
+                        updated = true
+                        break
+                    }
+                }
+
+                if (!updated) {
+                    // Append
+                    FileWriter(csvFile, true).use { fw ->
+                        fw.append(row.toString())
+                        fw.flush()
+                    }
+                } else {
+                    // Rewrite whole file
+                    FileWriter(csvFile, false).use { fw ->
+                        for (ln in lines) {
+                            fw.append(ln).append('\n')
+                        }
+                        fw.flush()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

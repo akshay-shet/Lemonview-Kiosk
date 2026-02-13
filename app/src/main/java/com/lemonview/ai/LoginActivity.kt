@@ -2,6 +2,11 @@ package com.lemonview.ai
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Environment
+import java.io.File
+import java.io.BufferedReader
+import java.io.FileReader
+import java.io.FileWriter
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
@@ -70,6 +75,9 @@ class LoginActivity : AppCompatActivity() {
                         editor.putBoolean("is_logged_in", true)
                         editor.apply()
 
+                        // update last_login in users.csv for this user (keeps CSV in sync)
+                        updateUserLastLoginCsv(name)
+
                         showToast(getString(R.string.success_login))
 
                         val intent = Intent(this, MainMenuActivity::class.java)
@@ -120,5 +128,62 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Update last_login timestamp for given email/name in users.csv
+     */
+    private fun updateUserLastLoginCsv(emailOrName: String) {
+        try {
+            val docs = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            if (docs == null) return
+            val csvFile = File(docs, "users.csv")
+            if (!csvFile.exists()) return
+
+            val lines = mutableListOf<String>()
+            BufferedReader(FileReader(csvFile)).use { br ->
+                var line: String? = br.readLine()
+                while (line != null) {
+                    lines.add(line)
+                    line = br.readLine()
+                }
+            }
+
+            var changed = false
+            for (i in 1 until lines.size) {
+                val l = lines[i]
+                if (l.contains("\"$emailOrName\"") || l.contains(emailOrName)) {
+                    // Attempt preserve registration_time
+                    val parts = l.split(',')
+                    val regTime = if (parts.size >= 5) parts[4] else System.currentTimeMillis().toString()
+                    // Extract name,email,dob,gender if possible
+                    val nameField = if (parts.size >= 1) parts[0] else "\"$emailOrName\""
+                    val emailField = if (parts.size >= 2) parts[1] else "\"$emailOrName\""
+                    val dobField = if (parts.size >= 3) parts[2] else "\"\""
+                    val genderField = if (parts.size >= 4) parts[3] else "\"\""
+                    val newRow = StringBuilder()
+                    newRow.append(nameField).append(',')
+                    newRow.append(emailField).append(',')
+                    newRow.append(dobField).append(',')
+                    newRow.append(genderField).append(',')
+                    newRow.append(regTime).append(',')
+                    newRow.append(System.currentTimeMillis())
+                    lines[i] = newRow.toString()
+                    changed = true
+                    break
+                }
+            }
+
+            if (changed) {
+                    FileWriter(csvFile, false).use { fw ->
+                        for (ln in lines) {
+                            fw.append(ln).append('\n')
+                        }
+                        fw.flush()
+                    }
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

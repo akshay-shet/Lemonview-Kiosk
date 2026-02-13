@@ -2,6 +2,9 @@ package com.lemonview.ai
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Button
@@ -16,8 +19,10 @@ import com.lemonview.ai.utils.SkinDataStore
 import com.lemonview.ai.model.RoutinePlan14Days
 import com.lemonview.ai.model.SkinResult
 import java.io.File
+import java.io.FileOutputStream
 import java.util.Date
 import java.util.Locale
+import java.util.ArrayList
 
 class RoutinePlannerActivity : AppCompatActivity() {
     private lateinit var container: LinearLayout
@@ -287,53 +292,95 @@ class RoutinePlannerActivity : AppCompatActivity() {
                 Toast.makeText(this, "데이터 없음", Toast.LENGTH_SHORT).show()
                 return
             }
-
-            val name = "Skincare_Routine_" + Date().time + ".txt"
-            val file = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), name)
-
-            val sb = StringBuilder()
-
-            // Add only the first day's routine
-            if (plan.dailyRoutines.isNotEmpty()) {
-                val d = plan.dailyRoutines[0]
-                sb.append("========================================\n")
-                sb.append("스킨케어 루틴 (14일 반복)\n")
-                sb.append("========================================\n\n")
-
+            // Compose routine text (FULL 14-day routine)
+            val routineText = StringBuilder()
+            routineText.append("스킨케어 루틴 (14일 계획)\n\n")
+            var dayIndex = 1
+            for (d in plan.dailyRoutines) {
+                routineText.append("=== Day ").append(dayIndex).append(" ===\n")
                 if (d.morning.isNotEmpty()) {
-                    sb.append("🌅 아침 스킨케어\n")
-                    for (s in d.morning) sb.append("  • ").append(s).append("\n")
-                    sb.append("\n")
+                    routineText.append("아침:\n")
+                    for (s in d.morning) routineText.append(" - ").append(s).append("\n")
+                    routineText.append("\n")
                 }
-
                 if (d.afternoon.isNotEmpty()) {
-                    sb.append("☀️ 낮 스킨케어\n")
-                    for (s in d.afternoon) sb.append("  • ").append(s).append("\n")
-                    sb.append("\n")
+                    routineText.append("낮:\n")
+                    for (s in d.afternoon) routineText.append(" - ").append(s).append("\n")
+                    routineText.append("\n")
                 }
-
                 if (d.evening.isNotEmpty()) {
-                    sb.append("🌙 저녁 스킨케어\n")
-                    for (s in d.evening) sb.append("  • ").append(s).append("\n")
-                    sb.append("\n")
+                    routineText.append("저녁:\n")
+                    for (s in d.evening) routineText.append(" - ").append(s).append("\n")
+                    routineText.append("\n")
                 }
-
-                sb.append("========================================\n")
-                sb.append("📋 14일 루틴\n")
-                sb.append("========================================\n\n")
-                sb.append("위의 루틴을 14일 동안 매일 반복하세요.\n\n")
-                sb.append("이 스킨케어 루틴을 지속적으로 따르면 피부 건강이 개선됩니다.\n")
+                dayIndex++
             }
 
-            file.writeText(sb.toString())
+            // Fetch skin result and append summary to routine text so PDF includes analysis
+            val skin = store.getLastSkinResult()
+            if (skin != null) {
+                val skinSummary = StringBuilder()
+                skinSummary.append("\n\n=== Skin Analysis Summary ===\n")
+                skinSummary.append("Health: ${skin.skinHealthPercentage}%\n")
+                skinSummary.append("Skin Tone: ${skin.skinTone}\n")
+                skinSummary.append("Analysis Quality: ${skin.analysisQuality}\n")
+                skinSummary.append("Overall Confidence: ${skin.overallConfidence}\n")
+                skinSummary.append("\nRecommendations:\n")
+                for (r in skin.recommendations) skinSummary.append(" - ").append(r).append("\n")
+                skinSummary.append("\nExplanation:\n").append(skin.skinAnalysisExplanation).append("\n")
+                routineText.append(skinSummary.toString())
+            }
 
-            val uri = FileProvider.getUriForFile(this, "com.lemonview.ai.fileprovider", file)
+            // Create PDF file with the routine (multi-page)
+            val pdfName = "Skincare_Routine_" + Date().time + ".pdf"
+            val pdfFile = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), pdfName)
+
+            val pageWidth = 595
+            val pageHeight = 842
+            val pdfDocument = PdfDocument()
+            val paint = Paint()
+            paint.color = Color.BLACK
+            paint.textSize = 12f
+
+            val lines = routineText.toString().split("\n")
+            var y = 40f
+            var pageNumber = 1
+            var pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+            var page = pdfDocument.startPage(pageInfo)
+            var canvas = page.canvas
+
+            for (line in lines) {
+                // Draw line
+                canvas.drawText(line, 40f, y, paint)
+                y += 18f
+
+                // If we overflow current page, finish it and start a new one
+                if (y > pageHeight - 40) {
+                    pdfDocument.finishPage(page)
+                    pageNumber += 1
+                    pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+                    page = pdfDocument.startPage(pageInfo)
+                    canvas = page.canvas
+                    y = 40f
+                }
+            }
+
+            // Finish last page (if not finished)
+            pdfDocument.finishPage(page)
+
+            FileOutputStream(pdfFile).use { out ->
+                pdfDocument.writeTo(out)
+            }
+            pdfDocument.close()
+
+            // Share only the PDF (contains both routine + skin summary)
+            val pdfUri = FileProvider.getUriForFile(this, "com.lemonview.ai.fileprovider", pdfFile)
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
-            intent.putExtra(Intent.EXTRA_STREAM, uri)
-            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_STREAM, pdfUri)
+            intent.type = "application/pdf"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivity(Intent.createChooser(intent, "Share"))
+            startActivity(Intent.createChooser(intent, "Share PDF"))
         } catch (e: Exception) {
             Toast.makeText(this, "저장 실패", Toast.LENGTH_SHORT).show()
         }
